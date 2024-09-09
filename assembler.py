@@ -3,15 +3,19 @@ from cpu import CPU
 
 # Turns a string into a program.
 def parse(assembly):
-    lines = assembly.split('\n')
+    lines = assembly.strip().split('\n')
     program = []
     cpu = CPU(1)
     for line in lines:
+        line = line.strip()
+        if not line: continue
         match = re.match(r'(\w+)\s+([-\d]+)(?:,\s*([-\d]+)(?:,\s*([-\d]+))?)?', line)
         if match:
             op_str, *args_str = match.groups()
             op = cpu.ops[op_str]
             args = [int(arg) for arg in args_str if arg is not None]
+            if op_str == 'LOAD' and len(args) == 1:
+                args.append(0)  # default memory location for LOAD is 0
             program.append((op, *args))
     return program
 

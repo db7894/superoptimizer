@@ -1,24 +1,23 @@
-from superoptimizer import *
+import unittest
+import sys
 
-def main():
-    # Test 1
-    assembly = """
-LOAD 3
-SWAP 0, 1
-LOAD 3
-SWAP 0, 2
-LOAD 3
-SWAP 0, 3
-LOAD 3
-    """
-    optimal_from_code(assembly, 4, 4, 5)
+if __name__ == "__main__":
+    test_suite = sys.argv[1] if len(sys.argv) > 1 else "all"
 
-    # Test 2
-    state = [0, 2, 1]
-    optimal_from_state(state, 3, 5)
+    if test_suite == "all" or test_suite == "superoptimizer":
+        print("Running Superoptimizer tests:")
+        from test.test_superoptimizer import TestSuperoptimizer
+        suite = unittest.TestLoader().loadTestsFromTestCase(TestSuperoptimizer)
+        unittest.TextTestRunner(verbosity=2).run(suite)
+        print("\n")
 
-    ## Test 3 - Careful, I don't think this will finish for days.
-    # state = [2, 4, 6, 8, 10, 12]
-    # optimal_from_state(state, 10, 15, True)
+    if test_suite == "all" or test_suite == "pruning":
+        print("Running Pruning Strategy tests:")
+        from test.test_pruning_strategies import TestPruningStrategies
+        suite = unittest.TestLoader().loadTestsFromTestCase(TestPruningStrategies)
+        unittest.TextTestRunner(verbosity=2).run(suite)
+        print("\n")
 
-main()
+    if test_suite not in ["all", "superoptimizer", "pruning"]:
+        print(f"Unknown test suite: {test_suite}")
+        print("Usage: python main.py [all|superoptimizer|pruning]")
